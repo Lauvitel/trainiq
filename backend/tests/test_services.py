@@ -49,7 +49,7 @@ def test_redis_connection():
 def test_nginx_running():
     for i in range(5):
         try:
-            response = requests.get("http://localhost")
+            response = requests.get("http://nginx")
             if response.status_code == 200:
                 assert True
                 return
@@ -64,7 +64,7 @@ def test_minio_connection():
         try:
             s3 = boto3.client(
                 "s3",
-                endpoint_url="http://localhost:9000",
+                endpoint_url="http://minio:9000",
                 aws_access_key_id="minio",
                 aws_secret_access_key="minio123",
                 region_name="us-east-1",
