@@ -3,6 +3,7 @@ import pymongo
 import redis
 import requests
 import boto3
+import time
 from botocore.exceptions import EndpointConnectionError
 
 
@@ -13,7 +14,7 @@ def test_postgres_connection():
             dbname="trainiq",
             user="postgres",
             password="postgres",
-            host="host.docker.internal",
+            host="localhost",
             port="5432",
         )
         cur = conn.cursor()
@@ -46,21 +47,31 @@ def test_redis_connection():
 
 # NGINX
 def test_nginx_running():
-    response = requests.get("http://localhost")
-    assert response.status_code == 200
+    for i in range(5):
+        try:
+            response = requests.get("http://localhost")
+            if response.status_code == 200:
+                assert True
+                return
+        except Exception:
+            time.sleep(2)
+    assert False, "NGINX n’a pas répondu après plusieurs tentatives"
 
 
 # MinIO
 def test_minio_connection():
-    try:
-        s3 = boto3.client(
-            "s3",
-            endpoint_url="http://localhost:9000",
-            aws_access_key_id="minio",
-            aws_secret_access_key="minio123",
-            region_name="us-east-1",
-        )
-        buckets = s3.list_buckets()
-        assert isinstance(buckets.get("Buckets"), list)
-    except EndpointConnectionError:
-        assert False, "Could not connect to MinIO"
+    for i in range(5):
+        try:
+            s3 = boto3.client(
+                "s3",
+                endpoint_url="http://localhost:9000",
+                aws_access_key_id="minio",
+                aws_secret_access_key="minio123",
+                region_name="us-east-1",
+            )
+            buckets = s3.list_buckets()
+            assert isinstance(buckets.get("Buckets"), list)
+            return
+        except EndpointConnectionError:
+            time.sleep(2)
+    assert False, "Could not connect to MinIO après plusieurs tentatives"

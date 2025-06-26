@@ -58,6 +58,9 @@ jobs:
           sleep 5
           curl -f http://localhost:8000
 
+      - name: Wait for services to be ready
+        run: sleep 10
+
       - name: Run tests
         run: |
           pip install pytest httpx
