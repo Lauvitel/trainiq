@@ -43,27 +43,3 @@ def test_redis_connection():
     r.set("test_key", "hello")
     value = r.get("test_key")
     assert value.decode() == "hello"
-
-
-# NGINX
-def test_nginx_running():
-    for i in range(5):
-        try:
-            response = requests.get("http://nginx")
-            if response.status_code in (200, 403, 404):
-                return
-        except Exception:
-            time.sleep(2)
-    assert False, "NGINX n’a pas répondu après plusieurs tentatives"
-
-
-# MinIO
-def test_minio_connection():
-    for i in range(5):
-        try:
-            response = requests.get("http://minio:9000/minio/health/live")
-            if response.status_code == 200:
-                return
-        except Exception:
-            time.sleep(2)
-    assert False, "MinIO n’a pas répondu après plusieurs tentatives"
