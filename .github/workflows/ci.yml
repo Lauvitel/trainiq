@@ -57,3 +57,8 @@ jobs:
           uvicorn backend.gateway.main:app --host 127.0.0.1 --port 8000 &
           sleep 5
           curl -f http://localhost:8000
+
+      - name: Run tests
+    run: |
+      pip install pytest httpx
+      pytest backend/tests
