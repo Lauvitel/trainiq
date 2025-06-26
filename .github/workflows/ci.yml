@@ -34,19 +34,6 @@ jobs:
         image: mongo:6
         ports: ['27017:27017']
 
-      minio:
-        image: minio/minio
-        env:
-          MINIO_ROOT_USER: minio
-          MINIO_ROOT_PASSWORD: minio123
-        args: server /data --console-address ":9001"
-        ports: ['9000:9000', '9001:9001']
-        options: >-
-          --health-cmd="curl -f http://localhost:9000/minio/health/live || exit 1"
-          --health-interval=5s
-          --health-timeout=3s
-          --health-retries=10
-
       nginx:
         image: nginx:alpine
         ports: ['80:80']
@@ -66,12 +53,16 @@ jobs:
         run: |
           apt update && apt install -y gcc libpq-dev curl netcat
           pip install -r backend/requirements.txt
-          pip install pytest httpx black
+          pip install pytest httpx black boto3
+
+      - name: Launch MinIO manually
+        run: |
+          docker run -d --name minio             -e MINIO_ROOT_USER=minio             -e MINIO_ROOT_PASSWORD=minio123             -p 9000:9000             minio/minio server /data --console-address ":9001"
 
       - name: Wait for services
         run: |
           for i in {1..10}; do curl -sSf http://nginx && break || sleep 3; done
-          for i in {1..10}; do curl -sSf http://minio:9000/minio/health/live && break || sleep 3; done
+          for i in {1..10}; do curl -sSf http://localhost:9000/minio/health/live && break || sleep 3; done
 
       - name: Run tests
         env:
