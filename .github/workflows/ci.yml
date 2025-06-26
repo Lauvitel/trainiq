@@ -59,6 +59,6 @@ jobs:
           curl -f http://localhost:8000
 
       - name: Run tests
-    run: |
-      pip install pytest httpx
-      pytest backend/tests
+        run: |
+          pip install pytest httpx
+          pytest backend/tests
