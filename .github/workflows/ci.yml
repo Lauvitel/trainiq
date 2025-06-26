@@ -50,10 +50,10 @@ jobs:
           black --check backend
 
       - name: Set PYTHONPATH
-        run: echo "PYTHONPATH=$PWD" >> $GITHUB_ENV
+        run: echo "PYTHONPATH=$GITHUB_WORKSPACE" >> $GITHUB_ENV
 
       - name: Run gateway (basic test)
         run: |
-          uvicorn backend/gateway/main:app --host 127.0.0.1 --port 8000 &
+          uvicorn backend.gateway.main:app --host 127.0.0.1 --port 8000 &
           sleep 5
           curl -f http://localhost:8000
