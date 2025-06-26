@@ -49,6 +49,9 @@ jobs:
           pip install black
           black --check backend
 
+      - name: Set PYTHONPATH
+        run: echo "PYTHONPATH=$PWD" >> $GITHUB_ENV
+
       - name: Run gateway (basic test)
         run: |
           uvicorn backend/gateway/main:app --host 127.0.0.1 --port 8000 &
