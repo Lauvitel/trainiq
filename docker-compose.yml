@@ -1,11 +1,13 @@
 services:
   gateway:
     build:
-      context: ./backend/gateway
+      context: ./backend
+      dockerfile: gateway/Dockerfile
     container_name: gateway
+    working_dir: /backend/gateway
     command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
     volumes:
-      - ./backend/gateway:/app
+      - ./backend:/backend
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/trainiq
       - REDIS_URL=redis://redis:6379
